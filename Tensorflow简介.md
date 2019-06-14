@@ -119,3 +119,39 @@ with tf.Session() as sess:
     print(sess.run(output,feed_dict = {input1:7,input2:2}))  # placeholder 就是之后再传数据进去
 ```
 
+
+
+```
+# 线性tensorflow的运用
+import tensorflow as tf
+import numpy as np
+import matplotlib.pyplot as plt
+
+x_data = np.random.rand(100)  # 生成0-1之间的数字  randn 是标准正态分布的，均值为0标准差为1（有正有负的）
+noise = np.random.normal(0,0.01,x_data.shape)
+y_date = x_data * 0.1 + 0.2 + noise
+
+# plt.scatter(x_data,y_date)
+# plt.show()
+
+# define model 用来算预测值与实际值之间的loss
+d = tf.Variable(np.random.rand(1))
+k = tf.Variable(np.random.rand(1))
+y = k * x_data + d
+
+loss = tf.losses.mean_squared_error(y_date,y)
+optimizer = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
+
+init = tf.initialize_all_variables()
+
+with tf.Session() as sess:
+    sess.run(init)
+    for i in range(201):
+        sess.run(optimizer)
+        if i % 20 ==0:
+            print(i,sess.run([k,d]))
+    y_pred = sess.run(y)
+    plt.scatter(x_data,y_date)
+    plt.plot(x_data,y_pred,'r-',lw = 3)
+    plt.show()
+```
